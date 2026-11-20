@@ -1,0 +1,22 @@
+# Open Knowledge Format v0.3 & Persistent Bundle Engine (`src/okf/CONTEXT.md`)
+
+Implements the upstream **OKF v0.3** specification (`SPEC.md`), source-domain provenance auditing, UTF-8 byte-offset grounding cleanup, zero-token human source curation, and compounding `workspace/bundle/` knowledge graph synchronization.
+
+---
+
+## Chunk Map
+
+| File | Responsibility | Key Exports |
+| :--- | :--- | :--- |
+| [`timestamps.ts`](./timestamps.ts) | Validates ISO 8601 dates, HTTP `Last-Modified` headers, HTML entity decoding, W3C HTML `<meta>` / JSON-LD dates, and ISO 32000 PDF `/ModDate` + XMP timestamps. | `parseValidIsoTimestamp`, `normalizeIsoTimestamp`, `parseHttpLastModified`, `decodeHtmlEntities`, `extractHtmlModifiedFromSnippet`, `parsePdfDateToIso`, `extractPdfModifiedFromLatin1` |
+| [`document.ts`](./document.ts) | Zero-dependency OKF v0.3 YAML frontmatter parser (with duplicate-key rejection & `x-adjudications` round-trip) & deterministic serializer, current-only trust tier (`getOkfTrustTier`: `unverified` \| `machine-confirmed` \| `human-reviewed`), strict staleness (`isOkfStale`), actor normalizer (`normalizeOkfActor`), BPE script-outlier sanitizer, and Nordic-safe ASCII slug helpers. | `OKFDocument`, `OKFFrontmatter`, `OKFSource`, `OKFActorEvent`, `OkfAdjudicationOption`, `OkfAdjudicationItem`, `TrustTier`, `RESERVED_OKF_FILENAMES`, `parseOkfDocument`, `serializeOkfDocument`, `isOkfConceptDocument`, `isOkfBlank`, `parseOkfTimestampMs`, `normalizeOkfActor`, `normalizeOkfTags`, `normalizeOkfSources`, `normalizeVerified`, `getOkfTrustTier`, `isOkfStale`, `transliterateNordicAscii`, `truncateSlugAtWordBoundary`, `sanitizeDominantScriptBpeOutliers` |
+| [`provenance.ts`](./provenance.ts) | Unwraps Vertex AI Search `302` grounding redirects (capturing destination `Content-Type` / `%PDF-` `mime_type`, `#<entry-path>` XML archive fragments, `CSP: object-src 'none'` inline-PDF block warnings, `Last-Modified` + `<title>`), strips portal UI view-mode suffixes (`stripTrailingPortalViewChrome`), normalizes canonical URLs & multi-record archive dedupe keys, upgrades bare-domain source titles, heals orphan footnotes, structurally detects internal `/*.md` backlink sections (`findTrailingRelatedConceptsHeadingIndex`), and flags publisher-vs-domain mismatches. | `resolveRedirect`, `isPdfBlockedByBrowserCsp`, `normalizeHttpMimeType`, `inferSourceMimeTypeFromUrl`, `isMultiRecordArchiveUrl`, `normalizeCanonicalSourceUrl`, `getCanonicalSourceDedupeKeys`, `stripTrailingPortalViewChrome`, `stripFootnotesPreservingWordBoundaries`, `isInternalConceptLinkBullet`, `findTrailingRelatedConceptsHeadingIndex`, `isLowSignalGroundingUrl`, `enrichBareDomainSourceTitle`, `shouldUpgradeSourceTitle`, `healOrphanOkfFootnotes`, `inspectSourceDomainProvenance` |
+| [`grounding.ts`](./grounding.ts) | Snaps Gemini UTF-8 byte-offset `groundingSupports` onto clean Markdown prose boundaries (safe across multi-byte UTF-8 glyphs such as `é`/`ü`/`§`/`—`, headings, tables, emphasis, brackets, and structural internal concept backlinks), extracts & applies Stage 1 Intermission conflict/gap adjudications (`x-adjudications`), and executes `<50ms` zero-token source curation (`--reject-source`, `--add-source`, `--replace-source`). | `cleanGroundingLinks`, `curateOkfSources`, `CurateOkfSourcesOptions`, `extractIntermissionAdjudications`, `applyIntermissionAdjudications`, `ApplyIntermissionAdjudicationsOptions` |
+| [`bundle.ts`](./bundle.ts) | Merges verified/draft concepts into `workspace/bundle/research/`, regenerates `index.md`, appends `log.md`, validates OKF v0.3 bundle conformance & `references/*.md` extraction integrity (`validateOkfBundle`, `inspectReferenceExtractionIntegrity`), and injects bidirectional cross-concept links localized via Layer 3 `workspace/_config/locale.json` (English default). | `mergeConceptDocuments`, `regenerateBundleIndexes`, `appendBundleLog`, `injectBidirectionalBundleLinks`, `syncRunToBundle`, `validateOkfBundle`, `inspectReferenceExtractionIntegrity`, `OkfBundleValidationReport`, `OkfBundleFinding`, `ReferenceExtractionIntegrityResult` |
+| [`index.ts`](./index.ts) | Public barrel re-exporting all `okf` modules. | `*` |
+
+---
+
+## Invariants
+- **Allowed Imports:** Node.js built-ins + `../interactions/index.js` only.
+- **3-Way OKF v0.3 Citation Parity:** Every cited `[^id]` in prose must exist in both `frontmatter.sources[]` and the trailing Markdown footnote definitions (`[^id]: Title`), with zero orphan definitions.

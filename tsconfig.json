@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["node"],
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "noUnusedLocals": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}

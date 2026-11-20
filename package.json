@@ -1,0 +1,31 @@
+{
+  "name": "open-knowledge-studio",
+  "version": "2.0.0",
+  "description": "Zero-dependency grounded research, compounding OKF v0.3 knowledge graphs, and interactive A2UI v1.0 surfaces powered by Interpretable Context Methodology (ICM).",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "oks": "./bin/oks.mjs"
+  },
+  "scripts": {
+    "cli": "node --env-file-if-exists=.env.local bin/oks.mjs --cli",
+    "cli:stage1": "node --env-file-if-exists=.env.local bin/oks.mjs --stage1",
+    "cli:stage2": "node --env-file-if-exists=.env.local bin/oks.mjs --stage2",
+    "cli:stage3": "node --env-file-if-exists=.env.local bin/oks.mjs --stage3",
+    "cli:stage4": "node --env-file-if-exists=.env.local bin/oks.mjs --stage4",
+    "cli:verify": "node --env-file-if-exists=.env.local bin/oks.mjs --verify",
+    "cli:viz": "node --env-file-if-exists=.env.local bin/oks.mjs --viz",
+    "cli:a2ui": "node --env-file-if-exists=.env.local bin/oks.mjs --a2ui",
+    "cli:ping-pong": "node --env-file-if-exists=.env.local bin/oks.mjs --ping-pong",
+    "cli:status": "node bin/oks.mjs --status",
+    "cli:validate": "node bin/oks.mjs --validate-bundle",
+    "test": "node bin/oks.mjs --test",
+    "spec:check": "node bin/oks.mjs --spec-check",
+    "typecheck": "npx tsc --noEmit",
+    "clean": "node scripts/cleanup.js"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}
