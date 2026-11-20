@@ -1,0 +1,43 @@
+{
+  "$comment": "Tracks the three upstream open methodology and protocol specifications (`icm`, `okf`, `a2ui`) so `npm run spec:check` can detect new upstream releases, convention updates, or main-branch schema updates.",
+  "icm": {
+    "repository": "RinDig/Interpretable-Context-Methodology",
+    "author": "Jake Van Clief",
+    "paperUrl": "https://arxiv.org/abs/2603.16021",
+    "branch": "main",
+    "commit": "02ba5d85c7871b75c7c702a2d8da6524723d53d4",
+    "committedAt": "2026-07-25T16:17:00Z",
+    "trackedPaths": [
+      "_core",
+      "README.md"
+    ],
+    "conventionsPath": "_core/CONVENTIONS.md"
+  },
+  "okf": {
+    "repository": "open-knowledge-format/open-knowledge-format",
+    "branch": "main",
+    "commit": "527e81aff55992be21507e97004286789126f88c",
+    "committedAt": "2026-11-18T17:00:25Z",
+    "trackedPaths": [
+      "SPEC.md"
+    ],
+    "okfVersion": "0.3",
+    "specFile": "SPEC.md",
+    "rawSpecUrl": "https://raw.githubusercontent.com/open-knowledge-format/open-knowledge-format/main/SPEC.md"
+  },
+  "a2ui": {
+    "repository": "google/A2UI",
+    "branch": "main",
+    "commit": "d4f2761b4629028b7995fdd861a7792eeba529ff",
+    "committedAt": "2026-11-19T02:28:39Z",
+    "trackedPaths": [
+      "specification/v1_0",
+      "specification/versions.json",
+      "catalogs/basic/v1/catalog.json"
+    ],
+    "protocolVersion": "1.0",
+    "specDir": "specification/v1_0",
+    "basicCatalogUpstreamPath": "catalogs/basic/v1/catalog.json",
+    "versionsUrl": "https://raw.githubusercontent.com/google/A2UI/main/specification/versions.json"
+  }
+}

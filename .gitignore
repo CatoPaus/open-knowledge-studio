@@ -1,0 +1,30 @@
+# Dependency directories
+node_modules/
+
+# Local configuration and secret files
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Local runtime logs, snapshots, and sessions
+.sessions/
+.snapshots/
+.icm/
+.cache/
+
+# User-generated workspace runs and stage outputs (private research & scripts)
+workspace/runs/
+workspace/stages/
+
+# Build targets & logs
+dist/
+build/
+*.tsbuildinfo
+*.log
+npm-debug.log*
+
+# OS / Editor metadata
+.DS_Store
+Thumbs.db
