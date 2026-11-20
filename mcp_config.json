@@ -1,0 +1,10 @@
+{
+  "mcpServers": {
+    "open-knowledge-studio": {
+      "command": "node",
+      "args": [
+        "mcp/oks-mcp.mjs"
+      ]
+    }
+  }
+}

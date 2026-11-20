@@ -1,7 +1,7 @@
 ---
 name: icm-co-architect
 description: >-
-  Interactive one-step-at-a-time playbook for specializing, tuning, and debugging
+  Interactive one-step-at-a-time playbook for initializing, specializing, tuning, and debugging
   an Open Knowledge Studio (ICM + OKF v0.3 + A2UI v1.0) pipeline. Activate this skill whenever
   the user wants to build a grounded research course, briefing, memo, or audio/visual studio,
   customize stage contracts (01_research.md..04_audio.md), curate OKF v0.3 sources at Intermission,
@@ -10,7 +10,21 @@ description: >-
 
 # ICM Co-Architect Playbook (`ICM` · `OKF v0.3` · `A2UI v1.0`)
 
-Guide the user through customizing, testing, and evolving their **Open Knowledge Studio** pipeline **one question and one stage at a time**.
+Guide the user through initializing, customizing, testing, and evolving their **Open Knowledge Studio** pipeline **one question and one stage at a time**.
+
+## Step 0: Dual-Mode Execution (Cloned Template vs. Installed Plugin)
+
+Determine how Open Knowledge Studio is active in the user's current workspace:
+1. **Cloned Template Repo (`bin/oks.mjs` exists in workspace root):**
+   - Run commands via `npm run cli:stage1`, `npm run cli:verify`, `npm run cli:stage2`, `npm run cli:stage3`, `npm run cli:stage4`, `npm run cli:a2ui`, `npm run cli:viz`, `npm run cli:status`, `npm run cli:validate`, or `node bin/oks.mjs ...`.
+2. **Installed Plugin Mode (`workspace/GEMINI.md` or `prompts/01_research.md` absent, or `bin/oks.mjs` lives inside this plugin directory):**
+   - Resolve `<pluginRoot>` as two levels above this `SKILL.md` (`<pluginRoot>/bin/oks.mjs`).
+   - If the user's folder is not initialized yet, call the `oks_init_workspace` MCP tool (or run `node "<pluginRoot>/bin/oks.mjs" --init "<projectDir>"`) to scaffold clean `prompts/` + `workspace/` starter files **without** copying `src/` or `node_modules/`.
+   - Execute pipeline stages with zero `npm install` via `node --env-file-if-exists=.env.local "<pluginRoot>/bin/oks.mjs" --cwd "<projectDir>" <flags>`, and use the zero-token MCP tools (`oks_status`, `oks_validate_bundle`, `oks_verify_sources`, `oks_compile_studio`, `oks_spec_check`) whenever convenient.
+
+*(Throughout the phases below, `<OKS>` stands for `npm run` in a cloned repo or `node --env-file-if-exists=.env.local "<pluginRoot>/bin/oks.mjs" --cwd "<projectDir>"` in plugin mode.)*
+
+---
 
 ## Core Discipline: Strictly One Question & One Stage at a Time
 
@@ -21,11 +35,11 @@ In ICM, Stage 2 (`prompts/02_script.md`) consumes the physical artifact written 
    - **Mandatory Stage 1 Intermission Pause:** Upfront approval of `(Recommended)` choices (e.g., *"I approve all recommendations in advance"*) only auto-selects `ask_question` menus—you **MUST ALWAYS PAUSE** at Stage 1 Intermission (`a2ui_studio.html` + `cli:ping-pong`) and wait for post-Stage-1 human source sign-off. **Never** self-sign `--by "human:..."` before Intermission unless the user **explicitly** instructs to skip Intermission / skip source review.
    - **Never emit chat prose before `ask_question`** (prose ending in `:` can end the turn before `ask_question` fires). Fold any concise 1–3 sentence status/telemetry summary directly into `question`.
 2. **Edit One Layer/Stage -> `--dry-run` -> Standalone Run -> Filesystem Audit:**
-   - Preview at zero token cost (`npm run cli:stage1 -- --dry-run "<topic>"`), then run **only** that stage standalone (`cli:stage1`..`cli:stage4`, `cli:status`, `cli:validate`). Whenever a live stage moves to a background task, end your turn immediately with zero `read_file` calls on pending outputs and wait for Reactive Wakeup.
+   - Preview at zero token cost (`--dry-run`), then run **only** that stage standalone. Whenever a live stage moves to a background task, end your turn immediately with zero `read_file` calls on pending outputs and wait for Reactive Wakeup.
    - Inspect `workspace/runs/<runId>/meta.json`, `input/prompt_assembled.md`, `output/thinking_trace.md`, and `output/<artifact>`.
 3. **Engine Hygiene & Cross-Platform Shell:**
    - Never chain shell commands with `&&` (fails in Windows PowerShell 5.1); run separate commands.
-   - Standard domain customization requires **zero edits in `src/`**. If extending [`src/`](../../../src/CONTEXT.md), consult [`specification/STANDARDS_AND_REFERENCES.md`](../../../specification/STANDARDS_AND_REFERENCES.md) on demand and run `npm test` (`tsc --noEmit` + full self-test suite).
+   - Standard domain customization requires **zero edits in `src/`**. If extending [`src/`](../../src/CONTEXT.md), consult [`specification/STANDARDS_AND_REFERENCES.md`](../../specification/STANDARDS_AND_REFERENCES.md) on demand and run `node "<pluginRoot>/bin/oks.mjs" --test` (`tsc --noEmit` + full self-test suite).
 
 ---
 
@@ -51,14 +65,14 @@ In ICM, Stage 2 (`prompts/02_script.md`) consumes the physical artifact written 
    - **Do NOT** ask Stage 1 for derived `- [ ]` checklists, quizzes, case exercises, or spoken scripts—defer those to Stage 2 after human source verification.
    - Require OKF v0.3 frontmatter (`type`, `title`, `description`, `tags`, `stale_after` in RFC 3339 UTC, and `sources: [{ id, resource, title }]`—never `okf_version` on concepts), `[^id]` inline footnotes + bottom definitions, explicit surfacing of source conflicts (`[^a]` vs `[^b]`), and preference for canonical `text/html` authority pages over static archive PDFs.
 3. **Dry-Run, Standalone Stage 1 Run & Intermission Handoff:**
-   - Preview with `npm run cli:stage1 -- --dry-run "<topic>"`, then run `npm run cli:stage1 -- --artifact-dir "<appDataDir>\brain\<conversation-id>" "<topic>"`.
+   - Preview with `--stage1 --dry-run "<topic>"`, then run `--stage1 --artifact-dir "<appDataDir>\brain\<conversation-id>" "<topic>"`.
    - Follow [references/open-data-and-intermission.md](./references/open-data-and-intermission.md):
-     1. **Pre-Intermission Full-Document Read & `machine-confirmed` Auto-Remediation (`<50ms`, 0 LLM Tokens — Before `cli:ping-pong`):** Right after Stage 1 finishes, read the **entire** `research_summary.md` through its bottom Discrepancies/Intermission section and check stdout (`[Provenance CSP Warning]`) **before** launching `cli:ping-pong` (never batch a partial top-of-file read in the same turn as `cli:ping-pong`). Proactively auto-remediate any broken archive/source mismatch flagged by Stage 1 (and re-sync any mis-selected `references/<slug>.md` record by `<title>` metadata if applicable; `cli:verify` also auto-deprecates `references/<slug>.md` files whose `sources[]` are all rejected), superseded archive snapshot, `CSP: object-src 'none'` browser-blocked PDF covered by an active official HTML page, or secondary business/directory aggregator covered by an official primary entity/statutory registry URL/OpenAPI via `npm run cli:verify -- <runId> --by "icm-co-architect/gemini-4-argon" --replace-source <oldId=newId_or_URL> [--reject-source <oldId>] --artifact-dir "<artifactDir>"` **before** starting `cli:ping-pong` (preserves `status: draft` with `trust_tier: machine-confirmed` per OKF v0.3 `SPEC.md` §§5.2–5.4).
+     1. **Pre-Intermission Full-Document Read & `machine-confirmed` Auto-Remediation (`<50ms`, 0 LLM Tokens — Before `--ping-pong`):** Right after Stage 1 finishes, read the **entire** `research_summary.md` through its bottom Discrepancies/Intermission section and check stdout (`[Provenance CSP Warning]`) **before** launching `--ping-pong` (never batch a partial top-of-file read in the same turn as `--ping-pong`). Proactively auto-remediate any broken archive/source mismatch flagged by Stage 1 (and re-sync any mis-selected `references/<slug>.md` record by `<title>` metadata if applicable; `oks_verify_sources` / `--verify` also auto-deprecates `references/<slug>.md` files whose `sources[]` are all rejected), superseded archive snapshot, `CSP: object-src 'none'` browser-blocked PDF covered by an active official HTML page, or secondary business/directory aggregator covered by an official primary entity/statutory registry URL/OpenAPI via `oks_verify_sources` / `--verify <runId> --by "icm-co-architect/gemini-4-argon" --replace-source <oldId=newId_or_URL> [--reject-source <oldId>] --artifact-dir "<artifactDir>"` **before** starting `--ping-pong` (preserves `status: draft` with `trust_tier: machine-confirmed` per OKF v0.3 `SPEC.md` §§5.2–5.4).
      2. **Zero-Hit Registry Safety Net:** If a canonical primary registry not in `workspace/bundle/references/` has `0` entries in `sources[]`, include `🔌 Primary Registry & Open-Data / MCP Opportunity` in the Audit Report.
-     3. **HTML Auxiliary Pane + Ping-Pong Listener:** When `hasAntigravityBrowserCapability()` is true, register `<artifactDir>/a2ui_studio.html` via 1-byte `write_file(Append: true, Content: "\n", ArtifactMetadata: ...)` and start `npm run cli:ping-pong -- <runId>` in the background (`WaitMsBeforeAsync: 500`, `IsDaemon: false`).
+     3. **HTML Auxiliary Pane + Ping-Pong Listener:** When `hasAntigravityBrowserCapability()` is true, register `<artifactDir>/a2ui_studio.html` via 1-byte `write_file(Append: true, Content: "\n", ArtifactMetadata: ...)` and start `--ping-pong <runId>` in the background (`WaitMsBeforeAsync: 500`, `IsDaemon: false`).
      4. **Output Clickable Studio Links & End Turn (Mandatory Pause):** Output the Stage 1 Audit Report with clickable `[a2ui_studio.html](file:///...)`, `[a2ui.html](file:///...)`, and `[viz.html](file:///...)` links and **end your turn** (**never** call `ask_question` here, and **never** self-sign `--by "human:..."` without pausing here unless the user explicitly asked to skip Intermission).
-4. **Human Sign-Off & Intermission Adjudication (`npm run cli:verify` / `oks_verify_sources`):**
-   - In Intermission Studio, interactive Section 6 conflict/discrepancy cards let the human reviewer approve source switches, pick the authoritative value between conflicting sources, or mark open gaps to check later. When Ping-Pong wakes you up (or the user curates/adjudicates in chat), run `npm run cli:verify -- <runId> --by "human:<reviewer-id>"` (or `oks_verify_sources`) with any `--replace-source`, `--reject-source`, `--add-source`, `--resolve <id=val>`, `--defer <id>`, and `--note <id=text>` flags (`<50ms`, 0 tokens -> persists `x-adjudications` for Stage 2, sets `status: stable`, `trust_tier: human-reviewed`, refreshes `a2ui.html`, `viz.html`, `a2ui_studio.html`). Never hand-edit `research_summary.md` just to swap footnote IDs or record conflict decisions.
+4. **Human Sign-Off & Intermission Adjudication (`oks_verify_sources` / `--verify`):**
+   - In Intermission Studio, interactive Section 6 conflict/discrepancy cards let the human reviewer approve source switches, pick the authoritative value between conflicting sources, or mark open gaps to check later. When Ping-Pong wakes you up (or the user curates/adjudicates in chat), run `oks_verify_sources` or `--verify <runId> --by "human:<reviewer-id>"` with any `--replace-source`, `--reject-source`, `--add-source`, `--resolve <id=val>`, `--defer <id>`, and `--note <id=text>` flags (`<50ms`, 0 tokens -> persists `x-adjudications` for Stage 2, sets `status: stable`, `trust_tier: human-reviewed`, refreshes `a2ui.html`, `viz.html`, `a2ui_studio.html`). Never hand-edit `research_summary.md` just to swap footnote IDs or record conflict decisions.
 
 ---
 
@@ -70,7 +84,7 @@ In ICM, Stage 2 (`prompts/02_script.md`) consumes the physical artifact written 
    - Default to **1:1 read-along single-field prose** (`scriptBody`, `narration`, `actionItem`—**omit** `spokenScript` / `spokenNarration` / `spokenActionItem` on prose courses & briefings so on-screen text and TTS audio match word-for-word; `prepareTextForStudioTts()` verbalizes `§`/`§§`, units, currencies, and ranges and strips `[^id]` silently for speech; reserve separate `spoken*` fields strictly for dense visual tables/equations or podcast shows). Cite verified Stage 1 `[^<source-id>]` keys inline on claims across `scriptBody`, `narration`, `actionItem`, `scenarios[*].recommendedAction`, and `quiz[*].explanation` (never raw `https://...` URLs, and never `[^id]` in `title`, `visualPrompt`, or `quiz[*].options`), and enforce multi-paragraph `\n\n` prose.
    - **Everyday Regional, Topographic & Building-Massing Visual Grounding (`overviewVisualPrompt` & `visualPrompt`):** Instruct `02_script.md` so English `visualPrompt` scene directions anchor settings in the target language/community's authentic everyday landscape, seasonal light, vernacular indoor/outdoor structures, and practical contemporary working attire (with subtle everyday regional textile/craft details where natural)—avoiding both generic metropolitan defaults and ceremonial/folkloric costume stereotypes during routine work. When Stage 1 includes verified site/cadastral/elevation facts (`DSM - DTM` roof height / story count, parcel outbuildings, ground elevation & inland plateau vs. shoreline terrain), ground exterior massing and topography in those verified measurements while keeping scenes **editorial illustrations** (never claiming photorealistic surveillance accuracy or inventing unverified façade paint colors / interior security layouts). For depicted documents, clipboards, checklists, binders, forms, or whiteboards, specify abstract text-free horizontal line strokes or clean geometric blocks rather than readable text or pseudo-text.
 3. **Dry-Run & Standalone Stage 2 Run:**
-   - Run `npm run cli:stage2 -- --dry-run <runId>`, then `npm run cli:stage2 -- --artifact-dir "<artifactDir>" <runId>`.
+   - Run `--stage2 --dry-run <runId>`, then `--stage2 --artifact-dir "<artifactDir>" <runId>`.
    - Refresh `a2ui_studio.html` via 1-byte `write_file(Append: true)` and immediately call `ask_question` (empty chat text) with Stage 2 telemetry and `(Recommended)` next-stage options (`Stage 3 Visuals`, `Stage 4 Studio Audio`, `Phase 5`).
 
 ---
@@ -78,18 +92,18 @@ In ICM, Stage 2 (`prompts/02_script.md`) consumes the physical artifact written 
 ## Phase 4: Multimodal Stages (`03_visuals.md` & `04_audio.md`)
 
 Read [references/stage2-3-4-contracts.md](./references/stage2-3-4-contracts.md) for exact frontmatter templates—`runStage3Flow` and `runStage4Flow` are pre-wired in `src/` (zero engine edits needed):
-- **Stage 3 (`prompts/03_visuals.md` -> `gemini-nano-banana-2.1`):** `output.format: image`, `aspectRatio: "16:9"`, `imageSize: "1K"`, strictly zero embedded text/pseudo-text/watermarks (depict documents, clipboards, checklists, binders, forms, or whiteboards with abstract text-free horizontal line strokes and clean geometric blocks), and ground `visualPrompt` scenes in authentic everyday regional architecture, landscape, and practical working attire (never folkloric/ceremonial stereotypes during routine work). Run `npm run cli:stage3 -- --dry-run <runId>` then `npm run cli:stage3 -- --artifact-dir "<artifactDir>" <runId>` and refresh `a2ui_studio.html`.
+- **Stage 3 (`prompts/03_visuals.md` -> `gemini-nano-banana-2.1`):** `output.format: image`, `aspectRatio: "16:9"`, `imageSize: "1K"`, strictly zero embedded text/pseudo-text/watermarks (depict documents, clipboards, checklists, binders, forms, or whiteboards with abstract text-free horizontal line strokes and clean geometric blocks), and ground `visualPrompt` scenes in authentic everyday regional architecture, landscape, and practical working attire (never folkloric/ceremonial stereotypes during routine work). Run `--stage3 --dry-run <runId>` then `--stage3 --artifact-dir "<artifactDir>" <runId>` and refresh `a2ui_studio.html`.
 - **Pre-Stage-4 Native Catalog & Open-TTS Check (~3s, 0 Pipeline Tokens):** Before calling the Stage 4 `ask_question`:
   - If the workspace BCP-47 tag is natively supported by `gemini-3.8-flash-tts` (`isGeminiTtsNativelySupported(bcp47)`), offer **Single Locked Studio Voice** and **Role-Matched Dual-Voice Narration** (`dialogueMode: "semantic"`).
   - If the BCP-47 tag is **outside** `gemini-3.8-flash-tts`'s native catalog, mirror Step A.5 Open Data: check `search_marketplace`, run 1 `search_web("<language> neural text-to-speech REST API OR open TTS")` query, and verify any candidate public/university endpoint with a 1-sentence WAV probe (`parseWavMetadata`). Offer in `ask_question`: **(1) `(Recommended when public Open-TTS exists)` Connect Official Regional/Institutional Open-TTS** (`ttsProvider: "http"`, `ttsEndpoint` — single or semantic dual-voice + optional `.agents/plugins/<provider>-tts/`), **(2) Experimental Zero-Shot `gemini-3.8-flash-tts`** (`CreateVoice` auto-skipped), **(3) `/v1beta/voices` Voice Replication** (from user 10–30s WAV + consent WAV), or **(4) Skip Stage 4 Audio**.
-- **Stage 4 (`prompts/04_audio.md` -> `gemini-3.8-flash-tts` or `ttsProvider: "http"`):** `output.format: audio`, explicit BCP-47 `languageCode`. Keep the `04_audio.md` body empty or `<= 80` chars (never inject `{{voiceGuide}}`, `{{slotTitle}}`, or English `"Preserve <Voice>'s..."` prompts on non-English locales). Run `npm run cli:stage4 -- --dry-run <runId>` then `npm run cli:stage4 -- --artifact-dir "<artifactDir>" <runId>`, refresh `a2ui_studio.html`, and call `ask_question` for Phase 5.
+- **Stage 4 (`prompts/04_audio.md` -> `gemini-3.8-flash-tts` or `ttsProvider: "http"`):** `output.format: audio`, explicit BCP-47 `languageCode`. Keep the `04_audio.md` body empty or `<= 80` chars (never inject `{{voiceGuide}}`, `{{slotTitle}}`, or English `"Preserve <Voice>'s..."` prompts on non-English locales). Run `--stage4 --dry-run <runId>` then `--stage4 --artifact-dir "<artifactDir>" <runId>`, refresh `a2ui_studio.html`, and call `ask_question` for Phase 5.
 
 ---
 
 ## Phase 5: A2UI v1.0 Studio Wrap-Up or Bespoke Domain Web Studio
 
 Call `ask_question` directly (empty chat text) with `(Recommended)` first:
-1. **`(Recommended) Complete Pipeline & Keep Self-Contained A2UI v1.0 Studio`** (`a2ui.html` / `a2ui_studio.html` + `viz.html`, validated via `npm run cli:validate -- --strict`),
+1. **`(Recommended) Complete Pipeline & Keep Self-Contained A2UI v1.0 Studio`** (`a2ui.html` / `a2ui_studio.html` + `viz.html`, validated via `oks_validate_bundle`),
 2. **`Build a Bespoke Domain Web Studio (src/server.ts + public/)`** — read [references/phase5-web-studio.md](./references/phase5-web-studio.md) first, or
 3. **`Keep as Pure Headless CLI Pipeline`**.
 

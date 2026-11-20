@@ -32,7 +32,7 @@ Because every run lives in plain Markdown and JSON files on disk (`workspace/run
 
 ### 4. Declarative A2UI v1.0 Studio Out-of-the-Box + Optional Bespoke Domain UI
 * **Zero-CDN A2UI Studio & OKF Graph Compiler (`src/a2ui/` & `src/viz/`):** Every Stage 1 and Stage 2 run automatically compiles declarative **A2UI v1.0** surface artifacts (`a2ui_surface.json` / `.jsonl`) and self-contained, offline-capable HTML apps (`a2ui.html` and `workspace/bundle/viz.html`) with built-in GFM Markdown, interactive SVG + Cytoscape knowledge graphs, 1-click source curation, and multi-run switching—at **`0` runtime npm dependencies**.
-* **Optional Bespoke UI in Phase 5:** Because the engine (`bin/oks.mjs` + `src/`) ships zero framework bloat, once your pipeline stages (`01_research`, `02_script`, `03_...`, `04_...`) and real verified artifacts exist on disk, you can keep the built-in A2UI Studio / headless CLI pipeline or have the **Co-Architect** (`GEMINI.md` & `.agents/skills/icm-co-architect/SKILL.md`) generate a bespoke domain web app tailored to your exact schema.
+* **Optional Bespoke UI in Phase 5:** Because the engine (`bin/oks.mjs` + `src/`) ships zero framework bloat, once your pipeline stages (`01_research`, `02_script`, `03_...`, `04_...`) and real verified artifacts exist on disk, you can keep the built-in A2UI Studio / headless CLI pipeline or have the **Co-Architect** (`.agents/rules/icm-co-architect.md` & `skills/icm-co-architect/SKILL.md`) generate a bespoke domain web app tailored to your exact schema.
 
 ---
 
@@ -103,10 +103,9 @@ All legacy text models (`gemini-2.5-*`, `gemini-3.5-*`, etc.) and deprecated sam
 3. **Sub-Second Grounding Citation Resolution & Per-Source Temporal Provenance (`resolveRedirect` & `cleanGroundingLinks`)**
    * Resolves `vertexaisearch.cloud.google.com/grounding-api-redirect/...` URLs using `redirect: 'manual'` first to read Google's `302 Location` header directly (~0.5s total for 100+ links) without timing out on unreachable third-party servers, while opportunistically capturing HTTP `Last-Modified` (`last_modified` in ISO 8601 UTC).
    * Stamps every grounded source in `sources[]` with `retrieved_at` (ISO 8601 UTC timestamp), preserves existing bundle `retrieved_at` timestamps across concept merges, weaves Interactions API `url_citation` annotations inline as `[^id]` footnotes at exact UTF-8 byte offsets, and renders `retrieved` / `last_modified` badges in `viz.html`.
-4. **Built-In Antigravity 2.0 ICM Co-Architect (`GEMINI.md` & `.agents/`)**
-   * **Root `GEMINI.md`:** Configures the main Antigravity 2.0 agent as an interactive **ICM Co-Architect** that guides project customization one question and one stage at a time, audits filesystem traces (`meta.json`, `input/prompt_assembled.md`, `output/thinking_trace.md`), and builds a bespoke Domain Web Studio in Phase 5 after real run artifacts exist on disk.
-   * **Lifecycle Hooks (`.agents/hooks.json` & `.agents/scripts/icm-hooks.mjs`):** Automatically injects the project folder domain signal and latest run status at `SessionStart`, and enforces a `PreToolUse` guardrail blocking legacy models or deprecated sampling parameters (`temperature`, `topP`, `topK`).
-   * **Interactive Playbook Skill (`.agents/skills/icm-co-architect/SKILL.md`):** 5-phase runbook covering Layer 0/1 setup, Stage 1 verification, Stage 2 synthesis, Stage 3/4 multimodal expansion, and Phase 5 custom Domain Web Studio creation.
+4. **Dual-Mode Agent Plugin & Workspace Template (`.antigravity-plugin/plugin.json`, `mcp_config.json`, `skills/`, `.agents/`)**
+   * **Installable Plugin Mode (`agy plugin install` / Claude Code / Codex CLI):** Ships `.antigravity-plugin/plugin.json`, `mcp_config.json` (`mcp/oks-mcp.mjs` zero-`node_modules` stdio MCP server exposing `oks_init_workspace`, `oks_status`, `oks_validate_bundle`, `oks_verify_sources`, `oks_compile_studio`, and `oks_spec_check`), `bin/oks.mjs` (native Node.js v22.15+/v24+ TypeScript type-stripping launcher), `rules/AGENTS.md`, `hooks.json` (`scripts/icm-hooks.mjs`), and progressive-disclosure skills (`skills/icm-co-architect/` & `skills/okf-bundle/`).
+   * **Cloned Workspace Mode (`.agents/`):** Automatically activates `.agents/rules/icm-co-architect.md`, `.agents/skills.json`, and `.agents/hooks.json` when cloned directly as a standalone project repository.
 
 ---
 
@@ -118,23 +117,30 @@ The workspace layout maps abstract context layers directly to disk directories:
 .
 ├── .gitattributes               # Enforces clean LF line endings across Windows, macOS, and Linux
 ├── LICENSE                      # MIT License
-├── GEMINI.md                    # Antigravity 2.0 Main Agent Rules (ICM Co-Architect)
-├── SPEC.md                      # Open Knowledge Format (OKF v0.3) Upstream Specification
+├── .antigravity-plugin/
+│   └── plugin.json              # Antigravity Plugin Manifest (agy plugin install / validate)
+├── .claude-plugin/
+│   └── marketplace.json         # Claude Code Plugin Marketplace Manifest
+├── assets/
+│   └── logo.svg                 # 128x128 Plugin Icon
 ├── bin/
 │   └── oks.mjs                  # Zero-node_modules Node.js v22.15+/v24+ TypeScript CLI Launcher
+├── mcp/
+│   └── oks-mcp.mjs              # Zero-node_modules stdio JSON-RPC 2.0 MCP Server
+├── mcp_config.json              # Plugin MCP Server Declaration (open-knowledge-studio)
+├── hooks.json                   # Workspace-Scoped Plugin Lifecycle Hooks
+├── rules/
+│   └── AGENTS.md                # Workspace-Scoped Plugin Rules
+├── skills/                      # Progressive-Disclosure Agent Skills (<24 KB per SKILL.md)
+│   ├── icm-co-architect/        # Interactive 5-phase ICM + OKF v0.3 + A2UI v1.0 Co-Architect Playbook
+│   └── okf-bundle/              # Standalone OKF v0.3 Authoring, Validation & Consumption Skill
+├── SPEC.md                      # Open Knowledge Format (OKF v0.3) Upstream Specification
 ├── specification/               # Vendored A2UI v1.0 Schemas, Catalogs & 3-Pillar Upstream Lock
 │   ├── STANDARDS_AND_REFERENCES.md # Normative ISO/RFC/W3C/IANA standards & provenance registry map
 │   ├── UPSTREAM_LOCK.json       # Pinned ICM, OKF v0.3 & A2UI v1.0 upstream commits & versions
 │   ├── versions.json            # Official A2UI protocol version registry
 │   └── v1_0/                    # A2UI v1.0 Protocol Spec (docs/a2ui_protocol.md), Schemas & Catalogs
-├── .agents/                     # Antigravity 2.0 Workspace Customizations
-│   ├── hooks.json               # SessionStart context injector & PreToolUse Argon guardrail
-│   ├── scripts/
-│   │   └── icm-hooks.mjs        # Cross-platform Node.js hook handler
-│   └── skills/
-│       └── icm-co-architect/
-│           ├── SKILL.md         # Interactive 5-phase specialization & custom UI playbook
-│           └── references/      # Progressive-disclosure Open-Data, Stage 2–4 & Phase 5 guides
+├── .agents/                     # Cloned Workspace Customizations (rules, skills.json, hooks.json)
 ├── package.json                 # Zero runtime dependencies (dev-only typescript & @types/node)
 ├── tsconfig.json
 ├── src/                         # Modular Zero-Dependency ICM + OKF v0.3 + A2UI v1.0 Engine
@@ -178,22 +184,27 @@ The workspace layout maps abstract context layers directly to disk directories:
 
 ---
 
-## Setup & Installation
+## Setup & Installation (Plugin Mode or Cloned Workspace Mode)
 
-### 1. Prerequisites
-Ensure you have **Node.js v22.15+ / v24+** installed (native TypeScript type-stripping, `node:module` `registerHooks`, `fetch` SSE streaming, and `--env-file-if-exists` support — zero `node_modules` required at runtime).
+### Option A — Install Globally as an Agent Plugin (Zero `npm install` Needed on Node.js 22.15+ / 24+)
 
-### 2. Optional Typechecking Dependencies
-`bin/oks.mjs` executes `src/index.ts` directly with zero `npm install`; install dev-only `typescript` and `@types/node` if you want local `npm test` / `npm run typecheck` (`tsc --noEmit`) verification:
-```bash
-npm install
-```
+Install the `icm-co-architect` and `okf-bundle` skills, zero-dependency `open-knowledge-studio` MCP server, and `bin/oks.mjs` engine into Antigravity, Claude Code, or Codex CLI:
 
-### 3. API Keys Configuration
-Create a `.env.local` file at the root of the project containing your Gemini API key:
-```env
-GEMINI_API_KEY="your-gemini-api-key"
-```
+| Tool | Install |
+| :--- | :--- |
+| **Antigravity CLI** (`1.3.2+`) | `agy plugin install https://github.com/CatoPaus/open-knowledge-studio` |
+| **Claude Code** | `/plugin marketplace add CatoPaus/open-knowledge-studio`, then `/plugin install open-knowledge-studio@open-knowledge-studio` |
+| **Codex CLI** | `codex plugin marketplace add CatoPaus/open-knowledge-studio`, then `codex plugin add open-knowledge-studio@open-knowledge-studio` |
+
+Once installed as a plugin, open **any** empty project folder, set `GEMINI_API_KEY` in `.env.local` (or `~/.gemini/.env`), and ask the agent to initialize a studio (`oks_init_workspace` scaffolds only `prompts/` + `workspace/`, keeping your project folder completely free of engine source code).
+
+### Option B — Clone as a Standalone Project Template
+
+1. **Prerequisites:** Ensure you have **Node.js v22.15+ / v24+** installed (runs `bin/oks.mjs` directly with zero `node_modules`; run `npm install` only if you want local TypeScript IDE/typecheck tooling).
+2. **API Key Configuration:** Create `.env.local` at the root of the project:
+   ```env
+   GEMINI_API_KEY="your-gemini-api-key"
+   ```
 
 ---
 

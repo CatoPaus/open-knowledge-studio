@@ -1,0 +1,30 @@
+{
+  "name": "open-knowledge-studio",
+  "description": "Grounded research, compounding OKF v0.3 knowledge graphs, and interactive A2UI v1.0 surfaces powered by Interpretable Context Methodology (ICM).",
+  "owner": {
+    "name": "Cato Paus"
+  },
+  "plugins": [
+    {
+      "name": "open-knowledge-studio",
+      "source": "./skills",
+      "description": "Agent skills and zero-dependency ICM + OKF v0.3 + A2UI v1.0 Studio workflow for grounded research courses, briefings, and compounding knowledge bundles.",
+      "version": "2.0.0",
+      "author": {
+        "name": "Cato Paus"
+      },
+      "homepage": "https://github.com/CatoPaus/open-knowledge-studio",
+      "repository": "https://github.com/CatoPaus/open-knowledge-studio",
+      "license": "MIT",
+      "keywords": [
+        "icm",
+        "okf",
+        "open-knowledge-format",
+        "a2ui",
+        "research",
+        "knowledge-graph"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

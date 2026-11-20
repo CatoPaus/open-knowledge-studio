@@ -1,0 +1,18 @@
+{
+  "name": "open-knowledge-studio",
+  "displayName": "Open Knowledge Studio",
+  "version": "2.0.0",
+  "description": "Zero-dependency grounded research, compounding OKF v0.3 knowledge graphs, and interactive A2UI v1.0 surfaces powered by Interpretable Context Methodology (ICM) and Gemini 4 Argon.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Initialize an Open Knowledge Studio workspace here and guide me step-by-step to build a grounded training course",
+    "Validate our workspace/bundle for strict OKF v0.3 conformance and generate the interactive viz.html knowledge graph",
+    "Run a grounded research briefing with verified primary sources, studio voiceover, and an interactive A2UI v1.0 Studio"
+  ],
+  "author": {
+    "name": "Cato Paus",
+    "url": "https://github.com/CatoPaus"
+  },
+  "homepage": "https://github.com/CatoPaus/open-knowledge-studio",
+  "repository": "https://github.com/CatoPaus/open-knowledge-studio"
+}

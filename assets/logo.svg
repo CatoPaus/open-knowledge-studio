@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" fill="none">
+  <defs>
+    <linearGradient id="oks-bg" x1="16" y1="16" x2="112" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="55%" stop-color="#2563eb"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+    <linearGradient id="oks-accent" x1="36" y1="32" x2="96" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#93c5fd"/>
+      <stop offset="100%" stop-color="#5eead4"/>
+    </linearGradient>
+  </defs>
+  <!-- 10% outer margin (13px..115px = 102x102 rounded squircle) -->
+  <rect x="13" y="13" width="102" height="102" rx="24" fill="url(#oks-bg)" stroke="#e2e8f0" stroke-width="2.5" stroke-opacity="0.35"/>
+  <!-- ICM Context Layers -->
+  <path d="M34 84L64 98L94 84" stroke="#e0f2fe" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+  <path d="M34 72L64 86L94 72" stroke="url(#oks-accent)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- OKF Knowledge Graph Edges -->
+  <line x1="64" y1="36" x2="40" y2="57" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="64" y1="36" x2="88" y2="57" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round"/>
+  <line x1="40" y1="57" x2="64" y2="68" stroke="#99f6e4" stroke-width="3" stroke-linecap="round"/>
+  <line x1="88" y1="57" x2="64" y2="68" stroke="#99f6e4" stroke-width="3" stroke-linecap="round"/>
+  <!-- OKF + A2UI Nodes -->
+  <circle cx="64" cy="36" r="8" fill="#ffffff"/>
+  <circle cx="40" cy="57" r="6.5" fill="#93c5fd"/>
+  <circle cx="88" cy="57" r="6.5" fill="#5eead4"/>
+  <circle cx="64" cy="68" r="7" fill="#fbbf24"/>
+</svg>

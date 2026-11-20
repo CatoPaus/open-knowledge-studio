@@ -4,7 +4,7 @@
     "SessionStart": [
       {
         "type": "command",
-        "command": "node scripts/icm-hooks.mjs session-start",
+        "command": "node scripts/icm-hooks.mjs session-start --source=workspace",
         "timeout": 10
       }
     ]
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node scripts/icm-hooks.mjs pre-tool-use",
+            "command": "node scripts/icm-hooks.mjs pre-tool-use --source=workspace",
             "timeout": 10
           }
         ]

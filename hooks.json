@@ -1,0 +1,27 @@
+{
+  "oks-session-start": {
+    "enabled": true,
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "node scripts/icm-hooks.mjs session-start --source=plugin",
+        "timeout": 10
+      }
+    ]
+  },
+  "oks-argon-guard": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "edit_file|write_file",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node scripts/icm-hooks.mjs pre-tool-use --source=plugin",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

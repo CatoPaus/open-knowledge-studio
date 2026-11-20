@@ -1,4 +1,4 @@
-﻿# Phase 1 Step A.5 Open-Data MCP Scaffolding & Phase 2 Intermission Audit Reference
+# Phase 1 Step A.5 Open-Data MCP Scaffolding & Phase 2 Intermission Audit Reference
 
 ## 1. Dual-Axis Pre-Flight Primary-Registry & Open-Data MCP Plugin Scaffolding
 

@@ -5,7 +5,7 @@
  * type-stripping and `node:module` `registerHooks` — requiring ZERO `npm install` or `node_modules`.
  *
  * Supports `--cwd <projectDir>` so an installed Antigravity/Claude/Codex plugin can execute
- * Stage 1–4, `verify`, `a2ui`, `viz`, `status`, or `validate-bundle` against any folder.
+ * Stage 1–4, `verify`, `a2ui`, `viz`, `status`, `validate-bundle`, or `init` against any folder.
  */
 import * as fs from 'node:fs';
 import * as os from 'node:os';

@@ -1,4 +1,4 @@
-﻿# Phase 5 Bespoke Domain Web Studio Reference (`src/server.ts` + `public/`)
+# Phase 5 Bespoke Domain Web Studio Reference (`src/server.ts` + `public/`)
 
 Only build a custom Web Studio when the user explicitly selects Option 2 in Phase 5 *after* real Stage 1–4 artifacts exist in `workspace/runs/<runId>/`.
 
