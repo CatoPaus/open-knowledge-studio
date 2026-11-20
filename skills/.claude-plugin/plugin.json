@@ -1,0 +1,19 @@
+{
+  "name": "open-knowledge-studio",
+  "version": "2.0.0",
+  "description": "Agent skills for Open Knowledge Studio: grounded ICM research pipelines, OKF v0.3 knowledge bundles, and interactive A2UI v1.0 surfaces.",
+  "author": {
+    "name": "Cato Paus"
+  },
+  "homepage": "https://github.com/CatoPaus/open-knowledge-studio",
+  "repository": "https://github.com/CatoPaus/open-knowledge-studio",
+  "license": "MIT",
+  "keywords": [
+    "icm",
+    "okf",
+    "open-knowledge-format",
+    "a2ui",
+    "knowledge-graph"
+  ],
+  "skills": "./"
+}

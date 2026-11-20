@@ -19,7 +19,8 @@
     "cli:ping-pong": "node --env-file-if-exists=.env.local bin/oks.mjs --ping-pong",
     "cli:status": "node bin/oks.mjs --status",
     "cli:validate": "node bin/oks.mjs --validate-bundle",
-    "test": "node bin/oks.mjs --test",
+    "cli:init": "node bin/oks.mjs --init",
+    "test": "node bin/oks.mjs --test && node scripts/test-plugin.mjs",
     "spec:check": "node bin/oks.mjs --spec-check",
     "typecheck": "npx tsc --noEmit",
     "clean": "node scripts/cleanup.js"

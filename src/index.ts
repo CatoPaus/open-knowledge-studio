@@ -5,7 +5,7 @@ import { GEMINI_4_ARGON_MODEL } from './interactions/index.js';
 import { inferSourceMimeTypeFromUrl, is_stale, normalizeCanonicalSourceUrl, regenerateBundleIndexes, resolveRedirect, transliterateNordicAscii, truncateSlugAtWordBoundary, trust_tier, validateOkfBundle } from './okf/index.js';
 import { generateBundleVisualization } from './viz/index.js';
 import { closeActiveA2uiPingPongListener, generateA2uiSurface, openFileInSystemBrowser, startA2uiPingPongListener } from './a2ui/index.js';
-import { checkUpstreamSpecs, formatIcmPipelineStatus, getIcmPipelineStatus } from './ops/index.js';
+import { checkUpstreamSpecs, formatIcmPipelineStatus, getIcmPipelineStatus, initOksWorkspace } from './ops/index.js';
 import { runStage1Flow, runStage2Flow, runStage3Flow, runStage4Flow, verifyOkfConcept } from './pipeline/index.js';
 
 export * from './interactions/index.js';
@@ -30,6 +30,7 @@ if (
   process.argv.includes('--spec-check') ||
   process.argv.includes('--status') ||
   process.argv.includes('--validate-bundle') ||
+  process.argv.includes('--init') ||
   process.argv.includes('--cli') ||
   process.argv.includes('--stage1') ||
   process.argv.includes('--stage2') ||
@@ -43,6 +44,19 @@ if (
   (async () => {
     if (process.argv.includes('--test')) {
       await runIcmSelfTests();
+      return;
+    }
+
+    if (process.argv.includes('--init')) {
+      const initIdx = process.argv.indexOf('--init');
+      const overwrite = process.argv.includes('--overwrite');
+      const targetArg = process.argv
+        .slice(initIdx + 1)
+        .find((a) => !a.startsWith('--'));
+      const res = initOksWorkspace(targetArg || process.cwd(), { overwrite });
+      console.log(
+        `[Open Knowledge Studio Init]: Initialized ${res.targetDir} (${res.createdFiles.length} created, ${res.skippedFiles.length} kept existing)`
+      );
       return;
     }
 

@@ -1,4 +1,4 @@
-﻿# Stage 2, Stage 3 & Stage 4 Prompt Contract Reference
+# Stage 2, Stage 3 & Stage 4 Prompt Contract Reference
 
 ## 1. Stage 2 (`prompts/02_script.md`) — Canonical `output.schema` Keys
 
